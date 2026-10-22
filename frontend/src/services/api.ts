@@ -10,7 +10,13 @@ import type {
   DateRange,
 } from '../types';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+// In dev, use same-origin `/api` (Vite proxy → backend). In prod, set VITE_API_URL.
+const API_URL =
+  import.meta.env.VITE_API_URL !== undefined && import.meta.env.VITE_API_URL !== ''
+    ? import.meta.env.VITE_API_URL
+    : import.meta.env.DEV
+      ? ''
+      : 'http://localhost:8000';
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
   const res = await fetch(`${API_URL}${path}`, {

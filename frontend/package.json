@@ -9,7 +9,6 @@
     "preview": "vite preview --port 5173"
   },
   "dependencies": {
-    "@rollup/rollup-darwin-x64": "^4.62.3",
     "html-to-image": "^1.11.11",
     "lucide-react": "^0.562.0",
     "react": "^19.2.0",
