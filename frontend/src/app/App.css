@@ -1,0 +1,21 @@
+.cosight-layout {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  background-color: var(--color-white);
+}
+
+.cosight-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  background-color: var(--gray-50);
+}
+
+.cosight-main .cs-chat {
+  flex: 1;
+  min-height: 0;
+}

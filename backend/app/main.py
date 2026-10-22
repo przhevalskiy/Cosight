@@ -1,0 +1,65 @@
+from contextlib import asynccontextmanager
+
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
+from app.core.config import get_settings
+from app.api.routes.cosight import metrics_router as cosight_metrics_router
+from app.api.routes.cosight import chat_router as cosight_chat_router
+from app.api.routes.cosight import reports_router as cosight_reports_router
+from app.api.routes.cosight import brief_router as cosight_brief_router
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    settings = get_settings()
+    print("Starting CoSight API server...")
+    print(f"Debug mode: {settings.debug}")
+    print(f"CORS origins: {settings.cors_origins_list}")
+    print(f"Claude: {'configured' if settings.anthropic_api_key else 'missing API key'}")
+
+    yield
+
+    print("Shutting down CoSight API server...")
+
+
+app = FastAPI(
+    title="CoSight API",
+    description="Grounded marketing analytics and reporting API",
+    version="1.0.0",
+    lifespan=lifespan,
+)
+
+settings = get_settings()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.cors_origins_list,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+app.include_router(cosight_metrics_router)
+app.include_router(cosight_chat_router)
+app.include_router(cosight_reports_router)
+app.include_router(cosight_brief_router)
+
+
+@app.get("/")
+async def root():
+    return {
+        "name": "CoSight API",
+        "version": "1.0.0",
+        "status": "running",
+    }
+
+
+@app.get("/health")
+async def health_check():
+    settings = get_settings()
+    return {
+        "status": "healthy",
+        "providers": {
+            "claude": bool(settings.anthropic_api_key),
+        },
+    }

@@ -1,0 +1,21 @@
+Cowork
+
+Third-Party Acknowledgments
+
+This software incorporates components from the following open-source projects:
+
+- FastAPI (MIT) — https://github.com/tiangolo/fastapi
+- React (MIT) — https://github.com/facebook/react
+- Vite (MIT) — https://github.com/vitejs/vite
+- Zustand (MIT) — https://github.com/pmndrs/zustand
+- Supabase JS (MIT) — https://github.com/supabase/supabase-js
+- Anthropic Python SDK (MIT) — https://github.com/anthropics/anthropic-sdk-python
+- Mistral Python SDK (Apache 2.0) — https://github.com/mistralai/client-python
+- sse-starlette (BSD) — https://github.com/sysid/sse-starlette
+- jsPDF (MIT) — https://github.com/parallax/jsPDF
+- react-markdown (MIT) — https://github.com/remarkjs/react-markdown
+- Lucide React (ISC) — https://github.com/lucide-icons/lucide
+- Pydantic (MIT) — https://github.com/pydantic/pydantic
+- PyPDF (BSD) — https://github.com/py-pdf/pypdf
+- python-docx (MIT) — https://github.com/python-openxml/python-docx
+- Resend Python SDK (MIT) — https://github.com/resend/resend-python
