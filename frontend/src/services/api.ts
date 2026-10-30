@@ -81,6 +81,19 @@ export function getReportExportUrl(id: string, format: 'slides' | 'csv'): string
   return `${API_URL}/api/cosight/reports/${id}/export?format=${format}`;
 }
 
+// ── Agent activity (overview roster) ───────────────────────────────────────────
+
+export interface AgentActivityItem {
+  agent_id: string;
+  discussion_id: string | null;
+  snippet: string | null;
+  updated_at: string | null;
+}
+
+export async function fetchAgentActivity(): Promise<AgentActivityItem[]> {
+  return request('/api/cosight/agents/activity');
+}
+
 // ── Chat discussions ──────────────────────────────────────────────────────────
 
 export async function listDiscussions(): Promise<Array<{ id: string; title: string; updated_at: string }>> {
@@ -246,6 +259,7 @@ export interface StreamChatOptions {
   onProvenance: (tools: string[]) => void;
   onReport: (reportId: string, artifact: ReportArtifact) => void;
   onTitleUpdate: (discussionId: string, title: string) => void;
+  onAgent?: (agentId: string, displayName: string) => void;
   onDone: () => void;
   onError: (msg: string) => void;
   signal?: AbortSignal;
@@ -297,6 +311,9 @@ export async function streamChat(opts: StreamChatOptions): Promise<void> {
             break;
           case 'discussion_title':
             opts.onTitleUpdate(event.discussion_id, event.title);
+            break;
+          case 'agent':
+            opts.onAgent?.(event.agent_id, event.display_name);
             break;
           case 'error':
             opts.onError(event.error);

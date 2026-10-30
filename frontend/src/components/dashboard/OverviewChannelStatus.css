@@ -1,0 +1,25 @@
+.overview-connectors-notice {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1 1 100%;
+  padding: 10px 12px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: #78350f;
+  background: #fef9e7;
+  border: 1px solid #fcd34d;
+  border-radius: 10px;
+}
+
+.overview-connectors-notice strong {
+  font-weight: 600;
+  color: #92400e;
+}
+
+.overview-connectors-notice code {
+  font-size: 12px;
+  background: rgba(255, 255, 255, 0.6);
+  padding: 1px 4px;
+  border-radius: 4px;
+}

@@ -3,6 +3,7 @@
  */
 import React, { useState, useMemo } from 'react';
 import { formatCount } from '../../utils/formatNumber';
+import { SectionTitle } from './SectionTitle';
 import './DataTable.css';
 
 interface Props {
@@ -68,7 +69,7 @@ export const DataTable: React.FC<Props> = ({ headers, rows, title, csvUrl, pageS
   return (
     <div className="data-table">
       <div className="data-table__toolbar">
-        {title && <span className="data-table__title">{title}</span>}
+        {title && <SectionTitle title={title} className="data-table__title" />}
         <input
           className="data-table__filter"
           placeholder="Filter…"

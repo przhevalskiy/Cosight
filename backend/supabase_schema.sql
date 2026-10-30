@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS cosight_discussions (
   id         UUID    PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id    UUID,   -- nullable until auth is layered in
   title      TEXT    NOT NULL DEFAULT 'New Chat',
+  agent_id   TEXT,   -- last specialist that handled this thread (web, search, …)
   created_at TIMESTAMPTZ DEFAULT now(),
   updated_at TIMESTAMPTZ DEFAULT now()
 );
@@ -94,3 +95,6 @@ DROP POLICY IF EXISTS "Service role full access cosight_metric_cache" ON cosight
 CREATE POLICY "Service role full access cosight_metric_cache"
   ON cosight_metric_cache FOR ALL
   USING (true) WITH CHECK (true);
+
+-- Existing deployments: add specialist tag on discussions
+ALTER TABLE cosight_discussions ADD COLUMN IF NOT EXISTS agent_id TEXT;

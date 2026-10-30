@@ -9,6 +9,7 @@ from .message import Message
 class DiscussionBase(BaseModel):
     """Base discussion model."""
     title: str = "New Chat"
+    agent_id: Optional[str] = None
 
 
 class DiscussionCreate(DiscussionBase):

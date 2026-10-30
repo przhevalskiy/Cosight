@@ -2,7 +2,8 @@
  * StreamingBrief — Perplexity-style SSE answer with inline citations.
  */
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { CoSightGlyph } from '../chat/CoSightGlyph';
+import { AgentDotAvatar } from '../shared/AgentDotAvatar';
+import { agentIdForChannel } from '../../agents/registry';
 import { CitationText } from './CitationText';
 import { streamBrief } from '../../services/api';
 import { useSmoothStream } from '../../hooks/useSmoothStream';
@@ -74,11 +75,12 @@ export const StreamingBrief: React.FC<Props> = ({
   }, [channel, dateRange.start, dateRange.end, note, metricsReady, append, finish, reset]);
 
   const isStreaming = phase === 'streaming';
+  const agentId = agentIdForChannel(channel);
 
   if (!metricsReady) {
     return (
       <div className="streaming-brief streaming-brief--loading">
-        <CoSightGlyph state="loading" size={24} />
+        <AgentDotAvatar agentId={agentId} size={24} pulse />
         <span>Loading metrics…</span>
       </div>
     );
@@ -87,7 +89,7 @@ export const StreamingBrief: React.FC<Props> = ({
   if (phase === 'error') {
     return (
       <div className="streaming-brief streaming-brief--error">
-        <CoSightGlyph state="idle" size={24} />
+        <AgentDotAvatar agentId={agentId} size={24} />
         <span>{error || 'Brief unavailable'}</span>
       </div>
     );
@@ -96,13 +98,13 @@ export const StreamingBrief: React.FC<Props> = ({
   return (
     <div className="streaming-brief">
       <div className="streaming-brief__avatar">
-        <CoSightGlyph state={isStreaming ? 'loading' : 'done'} size={24} />
+        <AgentDotAvatar agentId={agentId} size={24} pulse={isStreaming} />
       </div>
       <div className="streaming-brief__message">
         {text ? (
           <CitationText text={text} citations={citations} isStreaming={isStreaming} />
         ) : (
-          <p className="streaming-brief__placeholder">CoSight is analyzing your data…</p>
+          <p className="streaming-brief__placeholder">Agent is analyzing your data…</p>
         )}
         {note && phase === 'done' && (
           <p className="streaming-brief__note">{note}</p>

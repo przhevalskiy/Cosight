@@ -4,10 +4,11 @@ import { useMetricsStore } from '../../stores/metricsStore';
 import { TrendChart } from './TrendChart';
 import { DashboardPageShell } from './DashboardPageShell';
 import { DateRangePicker } from './DateRangePicker';
-import { StaleBadge, LoadingSkeleton, ErrorState } from './ChannelStatus';
+import { LoadingSkeleton, ErrorState } from './ChannelStatus';
+import { OverviewChannelStatus } from './OverviewChannelStatus';
 import { ChibiAvatars } from '../shared/ChibiAvatars';
 import { OVERVIEW_PROMPTS } from '../shared/dashboardPrompts';
-import type { ScopedContext, NormalizedMetric } from '../../types';
+import type { ScopedContext, NormalizedMetric, ChannelMetrics } from '../../types';
 import './Page.css';
 import './OverviewPage.css';
 
@@ -21,8 +22,13 @@ export const OverviewPage: React.FC = () => {
     navigate('/chat', { state: { scopedContext: ctx, dateRange } });
   };
 
-  const channels = [overview?.web, overview?.search, overview?.email, overview?.social].filter(Boolean);
-  const allSummaryKpis = channels.flatMap(c =>
+  const channelMetrics: ChannelMetrics[] = [
+    overview?.web,
+    overview?.search,
+    overview?.email,
+    overview?.social,
+  ].filter((c): c is ChannelMetrics => !!c);
+  const allSummaryKpis = channelMetrics.flatMap(c =>
     c!.summary.filter((m: NormalizedMetric) => !m.date_bucket && !m.dimension)
   );
 
@@ -38,16 +44,14 @@ export const OverviewPage: React.FC = () => {
       header={(
         <>
           <div className="overview-header">
-            <ChibiAvatars count={5} />
-            <div className="overview-header__text">
-              <h1>Overview</h1>
-              <div className="cs-page__badges">
-                {channels.map(c => c && (
-                  <StaleBadge key={c.channel} status={c.status} channel={c.channel} message={c.error_message} />
-                ))}
+            <ChibiAvatars size={48} />
+            <div className="overview-header__main">
+              <div className="overview-header__top">
+                <h1>Overview</h1>
+                <OverviewChannelStatus channels={channelMetrics} />
+                <DateRangePicker value={dateRange} onChange={setDateRange} />
               </div>
             </div>
-            <DateRangePicker value={dateRange} onChange={setDateRange} />
           </div>
           {isLoading && <LoadingSkeleton rows={2} />}
           {!isLoading && error && <ErrorState message={error} />}

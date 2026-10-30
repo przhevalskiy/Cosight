@@ -11,19 +11,13 @@ import { ArrowUp, Square } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { useChatStore } from '../../stores/chatStore';
-import { CoSightGlyph } from './CoSightGlyph';
 import { ProvenanceChips, ToolCallIndicator } from './ProvenanceChips';
 import { ReportArtifact } from '../reports/ReportArtifact';
+import { AgentDotAvatar } from '../shared/AgentDotAvatar';
 import { ChibiAvatars } from '../shared/ChibiAvatars';
+import { getAgent } from '../../agents/registry';
 import type { ScopedContext, DateRange } from '../../types';
 import './ChatPage.css';
-
-const QUICK_ACTIONS = [
-  'Summarize last 30 days across all channels',
-  'What are the top search queries this month?',
-  'How is web traffic trending vs last month?',
-  'Build a monthly performance report',
-];
 
 export const ChatPage: React.FC = () => {
   const location     = useLocation();
@@ -32,7 +26,7 @@ export const ChatPage: React.FC = () => {
   const seedMessage  = location.state?.seedMessage  as string       | undefined;
 
   const {
-    messages, isStreaming, streamContent, activeTools, provenanceTools,
+    messages, isStreaming, streamContent, activeTools, provenanceTools, activeAgentId,
     sendMessage, cancelStream, createDiscussion, setActiveDiscussion, error,
   } = useChatStore();
 
@@ -59,6 +53,14 @@ export const ChatPage: React.FC = () => {
     if (seedMessage && seedMessage === lastSeedRef.current) return;
 
     (async () => {
+      const freshChat = !!(location.state as { freshChat?: boolean } | null)?.freshChat;
+      if (freshChat) {
+        lastSeedRef.current = undefined;
+        const id = await createDiscussion();
+        setActiveDiscussion(id);
+        return;
+      }
+
       const id = await createDiscussion();
       setActiveDiscussion(id);
 
@@ -103,27 +105,18 @@ export const ChatPage: React.FC = () => {
   return (
     <div className={`cs-chat ${isEmpty ? 'cs-chat--empty' : ''}`}>
 
-      {/* ── Empty state — chibis always visible, no initialization gate ── */}
       {isEmpty && (
         <div className="cs-chat__empty-state">
-          <ChibiAvatars />
-          <h2 className="cs-chat__empty-title">Ask CoSight anything</h2>
-          <p className="cs-chat__empty-sub">Get instant answers about CBS marketing performance — web, search, email, and social.</p>
-          <div className="cs-chat__quick-actions">
-            {QUICK_ACTIONS.map(q => (
-              <button key={q} className="cs-quick-btn" onClick={() => sendMessage(q)}>
-                {q}
-              </button>
-            ))}
-          </div>
+          <ChibiAvatars size={48} />
+          <h2 className="cs-chat__empty-title">Ask about analytics data</h2>
         </div>
       )}
 
       {/* ── Header (only when messages exist) ── */}
       {!isEmpty && (
         <div className="cs-chat__header">
-          <CoSightGlyph state={isStreaming ? 'loading' : 'done'} size={20} />
-          <span className="cs-chat__title">Cosight</span>
+          <AgentDotAvatar agentId={activeAgentId ?? 'chat'} size={20} pulse={isStreaming} />
+          <span className="cs-chat__title">{getAgent(activeAgentId ?? 'chat').displayName}</span>
           <span className="cs-chat__subtitle">CBS Marketing Analytics</span>
         </div>
       )}
@@ -134,7 +127,7 @@ export const ChatPage: React.FC = () => {
           {messages.map(msg => (
             <div key={msg.id} className={`cs-msg cs-msg--${msg.role}`}>
               {msg.role === 'assistant' && (
-                <CoSightGlyph state="done" size={24} />
+                <AgentDotAvatar agentId={msg.agent_id ?? 'chat'} size={24} />
               )}
               <div className="cs-msg__body">
                 {msg.report ? (
@@ -156,7 +149,7 @@ export const ChatPage: React.FC = () => {
           {/* Streaming turn */}
           {isStreaming && (
             <div className="cs-msg cs-msg--assistant">
-              <CoSightGlyph state="loading" size={24} />
+              <AgentDotAvatar agentId={activeAgentId ?? 'chat'} size={24} pulse />
               <div className="cs-msg__body">
                 {activeTools.length > 0 && <ToolCallIndicator tools={activeTools} />}
                 {streamContent && (

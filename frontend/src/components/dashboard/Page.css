@@ -14,12 +14,30 @@
   flex-wrap: wrap;
 }
 
+.cs-page__agent {
+  flex-shrink: 0;
+}
+
 .cs-page__header h1 {
   font-size: 20px;
   font-weight: 700;
   color: var(--cs-navy);
   margin: 0;
   flex: 1;
+  min-width: 0;
+}
+
+.cs-section-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--cs-navy);
+}
+
+.cs-section-tab span {
+  line-height: 1.2;
 }
 
 .cs-page__badges {

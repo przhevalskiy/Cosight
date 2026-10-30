@@ -11,6 +11,7 @@ import { AgentInputBar } from '../shared/AgentInputBar';
 import { useChatStore } from '../../stores/chatStore';
 import type { DashboardPrompt } from '../shared/dashboardPrompts';
 import type { DashboardInsightSection, NormalizedMetric, ScopedContext, DateRange } from '../../types';
+import { DashboardAgentProvider } from './DashboardAgentContext';
 import './DashboardPageShell.css';
 
 interface Props {
@@ -75,6 +76,7 @@ export const DashboardPageShell: React.FC<Props> = ({
   const showInsightChildren = useInsightSections && sectionsDone;
 
   return (
+    <DashboardAgentProvider channel={channel}>
     <div className="dashboard-shell">
       <div className="dashboard-shell__scroll">
         <div className="dashboard-shell__inner cs-page">
@@ -121,5 +123,6 @@ export const DashboardPageShell: React.FC<Props> = ({
         />
       </div>
     </div>
+    </DashboardAgentProvider>
   );
 };

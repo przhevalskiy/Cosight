@@ -14,6 +14,7 @@ import {
   tableInsightContext,
 } from '../../utils/insightContext';
 import type { DashboardInsightSection, ScopedContext } from '../../types';
+import { DashboardPageTitle } from './DashboardPageTitle';
 import './Page.css';
 
 export const SeoPage: React.FC = () => {
@@ -172,13 +173,11 @@ export const SeoPage: React.FC = () => {
       insightSections={insightSections}
       header={(
         <>
-          <div className="cs-page__header">
-            <h1>Search Performance</h1>
-            <span className="cs-page__scope">Columbia Business School</span>
+          <DashboardPageTitle title="Search Performance">
             {seo && <StaleBadge status={seo.status} channel="search" message={seo.error_message} />}
             <div style={{ fontSize: 12, color: '#9ca3af' }}>via Google Search Console · ~3 day lag</div>
             <DateRangePicker value={dateRange} onChange={setDateRange} />
-          </div>
+          </DashboardPageTitle>
           {isLoading && <LoadingSkeleton rows={2} />}
           {!isLoading && error && <ErrorState message={error} />}
           {!isLoading && !error && seo?.status === 'error' && (

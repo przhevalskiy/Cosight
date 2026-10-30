@@ -14,6 +14,7 @@ import {
   tableInsightContext,
 } from '../../utils/insightContext';
 import type { DashboardInsightSection, ScopedContext } from '../../types';
+import { DashboardPageTitle } from './DashboardPageTitle';
 import './Page.css';
 
 export const WebPage: React.FC = () => {
@@ -147,12 +148,10 @@ export const WebPage: React.FC = () => {
       insightSections={insightSections}
       header={(
         <>
-          <div className="cs-page__header">
-            <h1>Web Analytics</h1>
-            <span className="cs-page__scope">Columbia Business School</span>
+          <DashboardPageTitle title="Web Analytics">
             {web && <StaleBadge status={web.status} channel="web" message={web.error_message} />}
             <DateRangePicker value={dateRange} onChange={setDateRange} />
-          </div>
+          </DashboardPageTitle>
           {isLoading && <LoadingSkeleton rows={2} />}
           {!isLoading && error && <ErrorState message={error} />}
           {!isLoading && !error && web?.status === 'error' && (

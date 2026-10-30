@@ -34,13 +34,13 @@ if [ ! -d venv ]; then
 else
   source venv/bin/activate
 fi
-nohup uvicorn app.main:app --host 127.0.0.1 --port 8000 >> "$LOG_DIR/backend.log" 2>&1 &
+nohup "$BACKEND_DIR/venv/bin/python" -m uvicorn app.main:app --host 127.0.0.1 --port 8000 >> "$LOG_DIR/backend.log" 2>&1 &
 echo $! > "$PID_DIR/backend.pid"
 
 echo -e "${BLUE}Starting CoSight frontend...${NC}"
 cd "$FRONTEND_DIR"
 [ -d node_modules ] || npm install
-nohup npm run dev -- --host 127.0.0.1 >> "$LOG_DIR/frontend.log" 2>&1 &
+nohup npm run dev >> "$LOG_DIR/frontend.log" 2>&1 &
 echo $! > "$PID_DIR/frontend.pid"
 
 sleep 2

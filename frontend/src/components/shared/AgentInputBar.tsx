@@ -33,7 +33,7 @@ export const AgentInputBar: React.FC<Props> = ({
     const el = textareaRef.current;
     if (!el) return;
     el.style.height = 'auto';
-    el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+    el.style.height = Math.min(el.scrollHeight, 96) + 'px';
   }, [input]);
 
   const handleSend = async () => {
@@ -58,11 +58,13 @@ export const AgentInputBar: React.FC<Props> = ({
     }
   };
 
-  const handleQuickPrompt = (prompt: string) => {
+  const handleQuickPrompt = async (prompt: string) => {
     if (navigateOnSend) {
+      const id = await createDiscussion();
+      setActiveDiscussion(id);
       navigate('/chat', { state: { seedMessage: prompt } });
     } else {
-      sendMessage(prompt);
+      await sendMessage(prompt);
     }
   };
 
@@ -90,23 +92,25 @@ export const AgentInputBar: React.FC<Props> = ({
             disabled={!input.trim()}
             title="Send"
           >
-            <ArrowUp size={18} />
+            <ArrowUp size={16} />
           </button>
         )}
       </div>
 
-      <div className="agent-quick-prompts">
-        {quickPrompts.map(q => (
-          <button
-            key={q.label}
-            className="agent-quick-btn"
-            onClick={() => handleQuickPrompt(q.prompt)}
-            disabled={isStreaming}
-          >
-            {q.label}
-          </button>
-        ))}
-      </div>
+      {quickPrompts.length > 0 && (
+        <div className="agent-quick-prompts">
+          {quickPrompts.map(q => (
+            <button
+              key={q.label}
+              className="agent-quick-btn"
+              onClick={() => handleQuickPrompt(q.prompt)}
+              disabled={isStreaming}
+            >
+              {q.label}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

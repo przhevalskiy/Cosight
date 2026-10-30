@@ -2,22 +2,36 @@
 .overview-header {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 20px;
   flex-wrap: wrap;
+  width: 100%;
 }
 
-.overview-header__text {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+.overview-header .chibi-avatars {
+  margin-bottom: 0;
+  flex-shrink: 0;
+}
+
+.overview-header__main {
   flex: 1;
+  min-width: 200px;
 }
 
-.overview-header__text h1 {
+.overview-header__top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.overview-header__top h1 {
   font-size: 20px;
   font-weight: 700;
   color: var(--cs-navy);
   margin: 0;
+  flex: 1;
+  min-width: 120px;
 }
 
 /* Ask bar embedded below KPIs */

@@ -1,0 +1,129 @@
+.sidebar-agent-roster {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 8px 10px;
+}
+
+.sidebar-new-chat-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  margin-bottom: 6px;
+  padding: 8px 10px;
+  border: none;
+  border-radius: 12px;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  color: inherit;
+  transition: background-color var(--transition-fast);
+}
+
+.sidebar-new-chat-row:hover {
+  background-color: var(--gray-100);
+}
+
+.sidebar-new-chat-row--active {
+  background-color: var(--brand-100);
+}
+
+.sidebar-new-chat-row--active .sidebar-new-chat-row__label {
+  color: var(--cs-navy);
+}
+
+.sidebar-new-chat-row__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  color: var(--cs-navy);
+}
+
+.sidebar-new-chat-row__label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gray-900);
+}
+
+.cs-sidebar.collapsed .sidebar-new-chat-row {
+  justify-content: center;
+  padding: 10px 8px;
+}
+
+.cs-sidebar.collapsed .sidebar-new-chat-row__icon {
+  width: 28px;
+  height: 28px;
+}
+
+.sidebar-agent-roster__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sidebar-agent-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 12px;
+  text-decoration: none;
+  color: inherit;
+  transition: background-color var(--transition-fast);
+}
+
+.sidebar-agent-row:hover {
+  background-color: var(--gray-100);
+  text-decoration: none;
+}
+
+.sidebar-agent-row--active {
+  background-color: var(--brand-100);
+}
+
+.sidebar-agent-row--active .sidebar-agent-row__title {
+  color: var(--cs-navy);
+}
+
+.sidebar-agent-row__text {
+  flex: 1;
+  min-width: 0;
+  padding-top: 1px;
+}
+
+.sidebar-agent-row__title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gray-900);
+  line-height: 1.35;
+}
+
+.sidebar-agent-row__snippet {
+  margin-top: 2px;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--gray-500);
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.cs-sidebar.collapsed .sidebar-agent-row {
+  justify-content: center;
+  padding: 10px 8px;
+}
+
+.cs-sidebar.collapsed .sidebar-agent-roster {
+  padding: 8px 6px;
+}

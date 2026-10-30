@@ -8,6 +8,7 @@ import { StaleBadge, LoadingSkeleton, EmptyState, ErrorState, ConnectorError } f
 import { EMAIL_PROMPTS } from '../shared/dashboardPrompts';
 import { getChannelCsvUrl } from '../../services/api';
 import type { DashboardInsightSection, ScopedContext } from '../../types';
+import { DashboardPageTitle } from './DashboardPageTitle';
 import './Page.css';
 
 export const EmailPage: React.FC = () => {
@@ -82,12 +83,10 @@ export const EmailPage: React.FC = () => {
       insightSections={insightSections}
       header={(
         <>
-          <div className="cs-page__header">
-            <h1>Email Marketing</h1>
-            <span className="cs-page__scope">Columbia Business School</span>
+          <DashboardPageTitle title="Email Marketing">
             {email && <StaleBadge status={email.status} channel="email" message={email.error_message} />}
             <DateRangePicker value={dateRange} onChange={setDateRange} />
-          </div>
+          </DashboardPageTitle>
           {isLoading && <LoadingSkeleton rows={2} />}
           {!isLoading && error && <ErrorState message={error} />}
           {!isLoading && !error && email?.status === 'error' && (

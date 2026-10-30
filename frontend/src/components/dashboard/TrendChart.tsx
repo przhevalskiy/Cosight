@@ -10,6 +10,7 @@ import {
 import { toPng } from 'html-to-image';
 import type { NormalizedMetric } from '../../types';
 import { formatAxisCount } from '../../utils/formatNumber';
+import { SectionTitle } from './SectionTitle';
 import './TrendChart.css';
 
 interface Series {
@@ -68,7 +69,7 @@ export const TrendChart: React.FC<Props> = ({ title, timeseries, series, height 
   return (
     <div className="trend-chart">
       <div className="trend-chart__header">
-        <span className="trend-chart__title">{title}</span>
+        <SectionTitle title={title} className="trend-chart__title" />
         <button className="trend-chart__download" onClick={downloadPng} title="Download as PNG">
           ↓ PNG
         </button>

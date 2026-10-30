@@ -111,6 +111,7 @@ export interface ScopedContext {
 }
 
 export interface CoSightMessage {
+  agent_id?: string;
   id: string;
   role: 'user' | 'assistant';
   content: string;

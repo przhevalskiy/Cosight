@@ -61,8 +61,8 @@ class CoSightDiscussionService:
 
     def update_discussion(self, discussion_id: str, **updates) -> Optional[Discussion]:
         payload: dict = {"updated_at": datetime.utcnow().isoformat()}
-        for field in ("title",):
-            if field in updates:
+        for field in ("title", "agent_id"):
+            if field in updates and updates[field] is not None:
                 payload[field] = updates[field]
         resp = (
             self._client.table("cosight_discussions")
@@ -119,6 +119,7 @@ class CoSightDiscussionService:
         return Discussion(
             id=row["id"],
             title=row.get("title", "New Chat"),
+            agent_id=row.get("agent_id"),
             is_active=False,
             created_at=row.get("created_at", datetime.utcnow()),
             updated_at=row.get("updated_at", datetime.utcnow()),

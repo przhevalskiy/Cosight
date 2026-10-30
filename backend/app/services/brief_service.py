@@ -12,6 +12,7 @@ import logging
 from datetime import date
 from typing import Any, AsyncIterator, Dict, List, Optional
 
+from app.core.agents import agent_for_channel
 from app.core.config import get_settings
 from app.models.cosight_metric import Channel, ChannelMetrics, NormalizedMetric
 from app.providers import get_claude_provider, get_mistral_provider
@@ -206,13 +207,8 @@ async def stream_dashboard_brief(
             return
 
         channel_label = CHANNEL_LABELS.get(channel, channel)
-        system = (
-            "You are CoSight, a data analyst for CBS Marketing & Communications. "
-            "Write concise, plain-language dashboard briefs for non-digital marketers. "
-            "Use inline citation markers [1], [2], etc. for EVERY number you mention. "
-            "Only cite numbers that appear in the citation list. Do not invent data. "
-            "Write 3-5 sentences. No bullet lists. No markdown headers."
-        )
+        agent = agent_for_channel(channel)
+        system = agent.brief_system
         user_msg = (
             f"Write a brief for: {channel_label}\n"
             f"Date range: {start.isoformat()} to {end.isoformat()}\n\n"

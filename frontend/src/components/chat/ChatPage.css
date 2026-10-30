@@ -24,16 +24,29 @@
 }
 
 .cs-chat__empty-title {
-  font-size: 28px;
+  font-size: 40px;
   font-weight: 700;
   color: var(--gray-900);
-  margin: 0 0 8px;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  margin: 0 0 32px;
 }
 
 .cs-chat__empty-sub {
   font-size: 15px;
   color: var(--gray-500);
   margin: 0 0 20px;
+}
+
+.cs-chat__empty-state--sidebar {
+  max-width: 420px;
+}
+
+.cs-chat__empty-hint {
+  margin: 0;
+  font-size: 14px;
+  color: var(--gray-500);
+  line-height: 1.5;
 }
 
 /* Quick action pills — matches Cowork .quick-action-btn */

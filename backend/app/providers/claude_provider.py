@@ -81,12 +81,13 @@ class ClaudeProvider:
         if not formatted_messages:
             formatted_messages = [{"role": "user", "content": "Hello"}]
 
+        # anthropic>=2.x stream/create no longer accept `temperature`; callers may still pass it.
+        _ = temperature
         kwargs: Dict = {
             "model": self.model,
             "max_tokens": max_tokens,
             "system": system_prompt,
             "messages": formatted_messages,
-            "temperature": temperature,
         }
         if tools:
             kwargs["tools"] = tools

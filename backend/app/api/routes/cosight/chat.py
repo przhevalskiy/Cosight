@@ -25,7 +25,8 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
 from app.core.config import get_settings
-from app.core.cosight_tools import COSIGHT_SYSTEM_PROMPT, COSIGHT_TOOLS
+from app.core.agents import resolve_chat_agent
+from app.core.cosight_tools import COSIGHT_TOOLS
 from app.models.message import Message, MessageRole
 from app.providers import get_claude_provider, get_mistral_provider
 from app.services.cosight_discussion_service import get_cosight_discussion_service
@@ -156,8 +157,19 @@ async def stream_chat(request: ChatRequest):
         disc_service.update_discussion(request.discussion_id, title=new_title)
         title_updated = True
 
+    chat_agent = resolve_chat_agent(
+        request.message,
+        scoped_channel=request.scoped_context.channel if request.scoped_context else None,
+    )
+    agent_tools = chat_agent.tools_from(COSIGHT_TOOLS)
+
+    try:
+        disc_service.update_discussion(request.discussion_id, agent_id=chat_agent.id)
+    except Exception:
+        logger.debug("Could not persist agent_id on discussion (column may be missing)")
+
     # Build system prompt, injecting scoped context if provided
-    system_prompt = COSIGHT_SYSTEM_PROMPT
+    system_prompt = chat_agent.chat_system
     if request.scoped_context and request.scoped_context.metric_key:
         sc = request.scoped_context
         inject = (
@@ -189,6 +201,8 @@ async def stream_chat(request: ChatRequest):
         if title_updated:
             yield f"data: {json.dumps({'type': 'discussion_title', 'discussion_id': request.discussion_id, 'title': discussion.title[:50]})}\n\n"
 
+        yield f"data: {json.dumps({'type': 'agent', 'agent_id': chat_agent.id, 'display_name': chat_agent.display_name})}\n\n"
+
         # Multi-turn tool loop
         iteration = 0
         # anthropic_messages tracks the full context for multi-turn tool use
@@ -211,7 +225,7 @@ async def stream_chat(request: ChatRequest):
                     system_prompt=system_prompt,
                     temperature=request.temperature,
                     max_tokens=request.max_tokens,
-                    tools=COSIGHT_TOOLS,
+                    tools=agent_tools,
                     stream_metadata=stream_metadata,
                 ):
                     full_final_response.append(chunk)
@@ -335,7 +349,7 @@ async def stream_chat(request: ChatRequest):
                         max_tokens=request.max_tokens,
                         system=system_prompt,
                         messages=raw_messages,
-                        tools=COSIGHT_TOOLS,
+                        tools=agent_tools,
                         temperature=request.temperature,
                     ) as stream:
                         current_tool_name = ""

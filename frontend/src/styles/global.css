@@ -45,7 +45,7 @@
   --color-warning: #f59e0b;
 
   /* Layout */
-  --sidebar-width: 260px;
+  --sidebar-width: 300px;
   --header-height: 52px;
 
   /* Shadows */
@@ -114,11 +114,17 @@ input, textarea {
 
 textarea { resize: none; }
 
-/* Scrollbar */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--gray-300); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--gray-400); }
+/* Scrollbars — hidden; scrolling still works via trackpad / wheel / touch */
+* {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+*::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
 
 /* Animations */
 @keyframes fadeIn {

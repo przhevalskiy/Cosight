@@ -3,7 +3,9 @@ import { listReports, getReport } from '../../services/api';
 import { ReportArtifact } from './ReportArtifact';
 import type { ReportArtifact as ReportArtifactType } from '../../types';
 import { LoadingSkeleton, EmptyState, ErrorState } from '../dashboard/ChannelStatus';
+import { AgentDotAvatar } from '../shared/AgentDotAvatar';
 import './ReportsPage.css';
+import '../dashboard/Page.css';
 
 interface ReportSummary {
   id: string;
@@ -41,6 +43,7 @@ export const ReportsPage: React.FC = () => {
   return (
     <div className="cs-page">
       <div className="cs-page__header">
+        <AgentDotAvatar agentId="reports" size={28} className="cs-page__agent" />
         <h1>Reports</h1>
       </div>
 

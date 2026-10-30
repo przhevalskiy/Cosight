@@ -5,6 +5,7 @@
 import React, { useMemo, useState } from 'react';
 import type { NormalizedMetric } from '../../types';
 import { formatCount, formatPercent } from '../../utils/formatNumber';
+import { SectionTitle } from './SectionTitle';
 import './PlatformBreakdown.css';
 
 const PLATFORM_COLORS: Record<string, string> = {
@@ -133,7 +134,7 @@ export const PlatformBreakdown: React.FC<Props> = ({ metrics }) => {
   return (
     <div className="platform-breakdown">
       <div className="platform-breakdown__header">
-        <h2 className="platform-breakdown__title">By Platform</h2>
+        <SectionTitle title="By Platform" className="platform-breakdown__title" />
         <span className="platform-breakdown__hint">{rows.length} networks</span>
       </div>
       <div className="platform-breakdown__scroll">

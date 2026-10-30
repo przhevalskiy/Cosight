@@ -6,6 +6,7 @@ import { DataTable } from './DataTable';
 import { PlatformBreakdown } from './PlatformBreakdown';
 import { KPICard } from './KPICard';
 import { DashboardPageShell } from './DashboardPageShell';
+import { DashboardPageTitle } from './DashboardPageTitle';
 import { DateRangePicker } from './DateRangePicker';
 import { StaleBadge, LoadingSkeleton, EmptyState, ErrorState, ConnectorError } from './ChannelStatus';
 import { SOCIAL_PROMPTS } from '../shared/dashboardPrompts';
@@ -286,12 +287,10 @@ export const SocialPage: React.FC = () => {
   }, [social, overallSummary, platformMetrics, platformSeries, socialTimeseries, topPostRows, dateRange, handleDrillIn]);
 
   const header = (
-    <div className="cs-page__header">
-      <h1>Social Media</h1>
-      <span className="cs-page__scope">Columbia Business School</span>
+    <DashboardPageTitle title="Social Media">
       {social && <StaleBadge status={social.status} channel="social" message={social.error_message} />}
       <DateRangePicker value={dateRange} onChange={setDateRange} endLagDays={SPROUT_DATA_LAG_DAYS} />
-    </div>
+    </DashboardPageTitle>
   );
 
   return (

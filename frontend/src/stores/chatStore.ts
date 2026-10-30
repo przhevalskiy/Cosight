@@ -3,19 +3,17 @@ import type { CoSightMessage, ReportArtifact, ScopedContext } from '../types';
 import * as api from '../services/api';
 
 interface ChatState {
-  discussions: Array<{ id: string; title: string; updated_at: string }>;
-  discussionsLoading: boolean;
   activeDiscussionId: string | null;
   messages: CoSightMessage[];
   isStreaming: boolean;
   streamContent: string;
   activeTools: string[];
   provenanceTools: string[];
+  activeAgentId: string | null;
   error: string | null;
 }
 
 interface ChatActions {
-  loadDiscussions: () => Promise<void>;
   createDiscussion: () => Promise<string>;
   setActiveDiscussion: (id: string | null) => void;
   sendMessage: (message: string, scopedContext?: ScopedContext) => Promise<void>;
@@ -26,29 +24,17 @@ interface ChatActions {
 let abortController: AbortController | null = null;
 
 export const useChatStore = create<ChatState & ChatActions>((set, get) => ({
-  discussions: [],
-  discussionsLoading: false,
   activeDiscussionId: null,
   messages: [],
   isStreaming: false,
   streamContent: '',
   activeTools: [],
   provenanceTools: [],
+  activeAgentId: null,
   error: null,
-
-  loadDiscussions: async () => {
-    set({ discussionsLoading: true });
-    try {
-      const data = await api.listDiscussions();
-      set({ discussions: data, discussionsLoading: false });
-    } catch (e) {
-      set({ error: (e as Error).message, discussionsLoading: false });
-    }
-  },
 
   createDiscussion: async () => {
     const d = await api.createDiscussion();
-    set(s => ({ discussions: [{ id: d.id, title: d.title, updated_at: new Date().toISOString() }, ...s.discussions] }));
     return d.id;
   },
 
@@ -76,6 +62,7 @@ export const useChatStore = create<ChatState & ChatActions>((set, get) => ({
       streamContent: '',
       activeTools: [],
       provenanceTools: [],
+      activeAgentId: null,
       error: null,
     }));
 
@@ -90,6 +77,7 @@ export const useChatStore = create<ChatState & ChatActions>((set, get) => ({
       onChunk: (text) => set(s => ({ streamContent: s.streamContent + text })),
       onToolCall: (tool) => set(s => ({ activeTools: [...new Set([...s.activeTools, tool])] })),
       onProvenance: (tools) => set({ provenanceTools: tools, activeTools: [] }),
+      onAgent: (agentId) => set({ activeAgentId: agentId }),
       onReport: (reportId, artifact) => {
         const reportMsg: CoSightMessage = {
           id: `report-${reportId}`,
@@ -100,11 +88,7 @@ export const useChatStore = create<ChatState & ChatActions>((set, get) => ({
         };
         set(s => ({ messages: [...s.messages, reportMsg] }));
       },
-      onTitleUpdate: (discId, title) => {
-        set(s => ({
-          discussions: s.discussions.map(d => d.id === discId ? { ...d, title } : d),
-        }));
-      },
+      onTitleUpdate: () => {},
       onDone: () => {
         const content = get().streamContent;
         if (content.trim()) {
@@ -114,10 +98,11 @@ export const useChatStore = create<ChatState & ChatActions>((set, get) => ({
             content,
             timestamp: new Date().toISOString(),
             tools_called: get().provenanceTools,
+            agent_id: get().activeAgentId ?? undefined,
           };
           set(s => ({ messages: [...s.messages, assistantMsg] }));
         }
-        set({ isStreaming: false, streamContent: '', activeTools: [] });
+        set({ isStreaming: false, streamContent: '', activeTools: [], activeAgentId: null });
       },
       onError: (msg) => {
         set({ error: msg, isStreaming: false, streamContent: '', activeTools: [] });

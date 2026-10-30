@@ -8,6 +8,7 @@ from app.api.routes.cosight import metrics_router as cosight_metrics_router
 from app.api.routes.cosight import chat_router as cosight_chat_router
 from app.api.routes.cosight import reports_router as cosight_reports_router
 from app.api.routes.cosight import brief_router as cosight_brief_router
+from app.api.routes.cosight.agents import router as cosight_agents_router
 
 
 @asynccontextmanager
@@ -43,6 +44,7 @@ app.include_router(cosight_metrics_router)
 app.include_router(cosight_chat_router)
 app.include_router(cosight_reports_router)
 app.include_router(cosight_brief_router)
+app.include_router(cosight_agents_router)
 
 
 @app.get("/")

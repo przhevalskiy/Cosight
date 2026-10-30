@@ -10,6 +10,7 @@ import logging
 from datetime import date, datetime
 from typing import Any, AsyncIterator, Dict, List, Optional
 
+from app.core.agents import agent_for_channel
 from app.core.config import get_settings
 from app.models.message import Message, MessageRole
 from app.providers import get_claude_provider, get_mistral_provider
@@ -39,7 +40,28 @@ def _fallback_section_text(channel: str, section: str, context: Dict[str, Any]) 
     title = context.get("title") or context.get("label") or section.replace("_", " ").title()
     source = CHANNEL_SOURCES.get(channel, "CoSight")
 
-    if ctx_type == "kpi":
+    if ctx_type in ("kpi", "kpi_overview", "kpi-overview") or context.get("section") == "kpi_overview":
+        metrics: List[Dict[str, Any]] = context.get("metrics") or []
+        if metrics:
+            parts: List[str] = []
+            for m in metrics[:3]:
+                label = m.get("label") or m.get("key", "Metric")
+                val = m.get("formatted_value")
+                if val is None:
+                    raw = m.get("value", 0)
+                    unit = m.get("unit")
+                    if unit == "percent":
+                        val = f"{float(raw):.1f}%"
+                    else:
+                        val = _fmt_num(float(raw))
+                delta = m.get("delta_pct")
+                if delta is not None:
+                    direction = "up" if delta >= 0 else "down"
+                    parts.append(f"{label} {val}, {direction} {abs(float(delta)):.1f}% vs prior")
+                else:
+                    parts.append(f"{label} {val}")
+            return f"Key metrics for this period ({source}): {'; '.join(parts)}."
+
         label = context.get("label", title)
         value = context.get("formatted_value") or _fmt_num(float(context.get("value", 0)))
         delta = context.get("delta_pct")
@@ -110,12 +132,8 @@ async def stream_section_brief(
         section_title = context.get("title") or context.get("label") or section.replace("_", " ").title()
         ctx_type = context.get("type", section)
 
-        system = (
-            "You are CoSight, a data analyst for CBS Marketing & Communications. "
-            "Write exactly 1–2 plain-language sentences summarizing what happened in ONE dashboard section. "
-            "Be specific with numbers from the context only. Do not invent data. "
-            "No bullet lists, headers, or citation markers."
-        )
+        agent = agent_for_channel(channel)
+        system = agent.section_system
         user_msg = (
             f"Channel: {channel_label}\n"
             f"Section: {section_title} ({SECTION_LABELS.get(ctx_type, ctx_type)})\n"

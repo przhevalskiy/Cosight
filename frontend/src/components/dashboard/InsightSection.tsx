@@ -8,7 +8,8 @@
  */
 import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { streamSectionBrief } from '../../services/api';
-import { CoSightGlyph } from '../chat/CoSightGlyph';
+import { AgentDotAvatar } from '../shared/AgentDotAvatar';
+import { agentIdForChannel } from '../../agents/registry';
 import { useSmoothStream } from '../../hooks/useSmoothStream';
 import type { DashboardInsightSection, DateRange, ScopedContext } from '../../types';
 import './InsightSection.css';
@@ -37,6 +38,7 @@ export const InsightSection: React.FC<Props> = ({
   onCompleteRef.current = onStreamComplete;
 
   const layout = section.layout ?? 'stacked';
+  const agentId = agentIdForChannel(channel);
 
   const contextKey = useMemo(() => JSON.stringify(section.context), [section.context]);
 
@@ -99,7 +101,7 @@ export const InsightSection: React.FC<Props> = ({
   const annotationPanel = showInsight ? (
     <div className="insight-section__annotation">
       <div className="insight-section__annotation-header">
-        <CoSightGlyph state={phase === 'streaming' ? 'loading' : 'done'} size={16} />
+        <AgentDotAvatar agentId={agentId} size={16} pulse={phase === 'streaming'} />
         <span className="insight-section__annotation-label">Analysis</span>
       </div>
       {phase === 'error' ? (
@@ -135,7 +137,7 @@ export const InsightSection: React.FC<Props> = ({
             : (
               <div className="insight-section__annotation insight-section__annotation--waiting">
                 <div className="insight-section__annotation-header">
-                  <CoSightGlyph state="idle" size={16} />
+                  <AgentDotAvatar agentId={agentId} size={16} />
                   <span className="insight-section__annotation-label">Analysis</span>
                 </div>
                 <p className="insight-section__placeholder">Preparing analysis…</p>
